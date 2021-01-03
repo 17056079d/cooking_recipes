@@ -12,7 +12,13 @@
     <option value="dishes">dishes</option>
     <option value="baking">baking</option>
   </select><br />
-      Introduction: <br /><input type="text" rows="10" cols="30" name="introduction" /><br />
+		Cuisine: <select name="cuisine">
+    <option value="drink">Chinese</option>
+    <option value="vegetarian">Thai</option>
+    <option value="dishes">Spanish</option>
+    <option value="baking">Swedish</option>
+  </select><br />
+      Introduction: <br /><textarea name="introduction" cols="40" rows="5"></textarea><br />
       image: <input type="file" name="myimage" id="myimage"/><br />
       <input type="submit" value="Upload" />
     </form>
