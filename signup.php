@@ -53,10 +53,6 @@
     // Insert records to database if the data is validated
     if ($UserNameError == "" && $EmailError == "" && $PasswordError == "" && $ConfirmError == "") {
 
-        // Insert a record to table Playlist as every user have a play list called 'Favourites' in the beginning
-        $sql = "INSERT INTO Playlist (UserName, PlaylistName) VALUES ('$UserName', 'Favourites')";
-        $result = mysqli_query($db, $sql);
-
         // Insert a record to table User
         $sql = "INSERT INTO User (UserName, Password, Email) VALUES ('$UserName', '$Password', '$Email')";
         if (mysqli_query($db, $sql) or die(mysqli_error($db))) {
