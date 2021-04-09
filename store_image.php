@@ -26,8 +26,8 @@ else{
 }
 
 if ($RNameError == "" && $IntroductionError == "") {
-
-$sql="INSERT INTO recipes (RName,Introduction,Imagepath,Category,Imagename,Cuisine)VALUES('$RName','$Introduction','$imagepath','$Category','$imagename','$Cuisine')";
+	$author=$_COOKIE["userid"];
+$sql="INSERT INTO recipes (RName,Introduction,Imagepath,Category,Imagename,Cuisine,Author)VALUES('$RName','$Introduction','$imagepath','$Category','$imagename','$Cuisine','$author')";
 
 if (mysqli_query($db, $sql) or die(mysqli_error($db))) {
 	$message = "Recipe upload successfully";

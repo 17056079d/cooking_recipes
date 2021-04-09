@@ -72,5 +72,11 @@
     mysqli_close($db);
 
     // the response to android mobile
-    echo($message);
+	if($message=="A new account created successfully"){
+		$URL="/Function/Login/login_form.php";
+	}
+	else{
+		$URL="/Function/Register/register_form.php";
+	}
+    echo("<script type='text/javascript'>alert('$message');location.href='$URL'</script>");
 ?>

@@ -1,6 +1,7 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <html lang="en">
 <script>
+var userid=sessionStorage["userid"]
 var stepcount =4;
 var Ingcount=4;
 function deleteIng(){
@@ -50,6 +51,7 @@ function handin(){
 }
 createCookie("stepcount", stepcount, "10");
 createCookie("ingcount", Ingcount, "10");
+createCookie("userid", userid, "10");
 }
 </script>
 
@@ -67,12 +69,18 @@ createCookie("ingcount", Ingcount, "10");
     <option value="baking">baking</option>
   </select><br />
 		Cuisine: <select name="cuisine">
-    <option value="drink">Chinese</option>
-    <option value="vegetarian">Thai</option>
-    <option value="dishes">Spanish</option>
-    <option value="baking">Swedish</option>
+    <option value="Chinese">Chinese</option>
+    <option value="Thai">Thai</option>
+    <option value="Spanish">Spanish</option>
+    <option value="Swedish">Swedish</option>
+	<option value="Indian">Indian</option>
+	<option value="German">German</option>
+	<option value="Japanese">Japanese</option>
+	<option value="ltalian">ltalian</option>
+	<option value="Mexican">Mexican</option>
+	<option value="Global">Global</option>
   </select><br />
-      Introduction: <br /><textarea name="introduction" cols="40" rows="5"></textarea><br />
+      Introduction: <br /><textarea maxlength="300" name="introduction" cols="40" rows="5"></textarea><br />
       image: <input type="file" name="myimage" id="myimage"/><br />
 	  Ingredients:
 	  <table id = "ingredients">
