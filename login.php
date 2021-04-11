@@ -21,7 +21,7 @@
 
     // the response to android mobile
     if($message=="login successfully"){
-		$URL="/Function/Search/search.php";
+		$URL="/Function/Search/search.php?login=true&uid=$id";
 		echo("<script type='text/javascript'>alert('$message');sessionStorage.userid = '$id';sessionStorage.UN = '$UN';location.href='$URL'</script>");
 	}
 	else{

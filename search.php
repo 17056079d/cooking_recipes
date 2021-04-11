@@ -46,7 +46,7 @@ function createCookie(name, value, days) {
 createCookie("userid", userid, "10");
 function logout(){
 	sessionStorage.clear();
-	location.reload();
+	location.href="/Function/Search/search.php";
 }
 </script>
 <body class="body">
@@ -116,6 +116,83 @@ $array = array(
 	"Germany" => "German",
 	"Mexico" => "Mexican",
 );
+if(isset($_GET['login'])){
+	echo("<h2><center>Result</center></h2>");
+	printformat();
+	if ($_GET['login']==true){
+		if (isset($_POST['search'])) {
+		$target = $_POST['search'];
+		$uid=$_GET['uid'];
+		$cui =$conn->query("SELECT COUNT(*),Cuisine FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=1 GROUP BY Cuisine Order By COUNT(*) DESC");
+		$cat =$conn->query("SELECT COUNT(*),Category FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=1 GROUP BY Category Order By COUNT(*) DESC");
+		if ($cui->num_rows > 0 and $cat->num_rows > 0){ 
+			if($rows = $cui->fetch_assoc() and $rows2 = $cat->fetch_assoc()){
+				$countcui=$rows['COUNT(*)'];
+				$maxcui=$rows['Cuisine'];
+				//echo($rows['COUNT(*)']);
+				//echo($rows['Cuisine']);
+				$countcat=$rows2['COUNT(*)'];
+				$maxcat=$rows2['Category'];
+				//echo($rows2['COUNT(*)']);
+				//echo($rows2['Category']);
+				if($countcui==$countcat){
+					$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Category='$maxcat' and Cuisine='$maxcui'");
+					if ($result->num_rows > 0){
+						printrecipe($result);
+					}
+					$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and (Category!='$maxcat' or Cuisine!='$maxcui')");
+					if ($result->num_rows > 0){
+						printrecipe($result);
+					}
+				}
+				else if ($countcui>$countcat){
+					$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Cuisine='$maxcui'");
+					if ($result->num_rows > 0){
+						printrecipe($result);
+					}
+					$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Cuisine!='$maxcui'");
+					if ($result->num_rows > 0){
+						printrecipe($result);
+					}
+				}
+				else if ($countcui<$countcat){
+					$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Category='$maxcat'");
+					if ($result->num_rows > 0){
+						printrecipe($result);
+					}
+					$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Category='$maxcat'");
+					if ($result->num_rows > 0){
+						printrecipe($result);
+					}
+				}
+			}
+		}
+		echo("</table>");
+	}
+	else {
+		$cuisine=$array[$country];
+		$result = $conn->query("SELECT * FROM recipes WHERE Cuisine = '$cuisine' ");
+		if ($result->num_rows > 0){ 	
+				printrecipe($result);
+				$result = $conn->query("SELECT * FROM recipes WHERE Cuisine != '$cuisine' ");
+				printrecipe($result);
+				echo("</table>");
+		}
+		else{
+			$result = $conn->query("SELECT * FROM recipes WHERE Cuisine != '$cuisine' ");
+			if ($result->num_rows > 0){ 
+				printrecipe($result);
+				echo("</table>");
+			}
+			else{
+				echo("</table>");
+				echo("<h3><center>No result</center></h3>");
+			}
+		}
+	}
+	}
+}
+else{
     if (isset($_POST['search'])) {
 		$target = $_POST['search'];
 		$result = $conn->query("SELECT * FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%'");
@@ -129,7 +206,7 @@ $array = array(
 			echo("<h2><center>Result</center></h2>");
 			printformat();
 			echo("</table>");
-			echo("<h3><center>No result</center></h3>");
+			
 		}
 	}
 	else {
@@ -153,10 +230,11 @@ $array = array(
 			}
 			else{
 				echo("</table>");
-				echo("<h3><center>No result</center></h3>");
+				
 			}
 		}
 	}
+}
 ?>
 <script>
 if (sessionStorage["userid"] == null){
