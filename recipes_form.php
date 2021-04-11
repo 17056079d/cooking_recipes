@@ -1,7 +1,7 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <html lang="en">
 <script>
-var userid=sessionStorage["userid"]
+var userid=sessionStorage["userid"];
 var stepcount =4;
 var Ingcount=4;
 function deleteIng(){
