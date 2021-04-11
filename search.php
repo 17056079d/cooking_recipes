@@ -59,7 +59,11 @@ Function printrecipe($result){
 				while($rows = $result->fetch_assoc()){
 					echo("<tr>");
 				echo("<td>");
-				echo("<img src='../../".$rows['Imagename']."'");
+				?> <form method="post" action="display.php"> 
+					<input type="hidden" name="rid" value="<?= $rows['RID'] ?>">
+					<input type='image' src='../../<?php echo($rows['Imagename']);?>'alt='Submit' width='200pt' height='200pt'>
+					</form>
+				<?php
 				echo("</td>");
 				echo("<td>");
 				echo($rows['RName']);
@@ -91,10 +95,10 @@ Function printformat(){
 			echo("</table>");
 		echo("</form>");
 		echo("<br>");
-			echo("<table border='0' width='60%' class='center'>");
+			echo("<table border='0' width='80%' class='center'>");
 				echo("<tr>");
 				echo("<td width='20%'>Image</td>");
-				echo("<td width='10%'>Name</td>");
+				echo("<td width='30%'>Name</td>");
 				echo("<td width='10%'>Category</td>");
 				echo("<td width='10%'>Cuisine</td>");
 				echo("<td width='20%'>Introduction</td>");
