@@ -7,5 +7,11 @@ if($Uid!=0){
 	$sql="INSERT INTO favourite (RID,UID)VALUES('$Rid','$Uid')";
 	mysqli_query($db, $sql);
 }
-header("Location: search.php?login=true&uid=$Uid");
+if(isset($Uid)){
+	$login=true;
+}
+else{
+	$login=false;
+}
+header("Location: search.php?login=$login&uid=$Uid");
 ?>

@@ -39,7 +39,7 @@ $re = $recipe->fetch_assoc();
             
         </td>
 </tr>
-<tr><td><form method="post" action="addfavourite.php">
+<tr><td><form method="post" action="addfavourite.php?id=$rid&display=true">
 					<input type="hidden" name="rid" value="<?= $rid ?>"></input>
 					<h5><button>Favourite</button></h5>
 				</form></td></tr>

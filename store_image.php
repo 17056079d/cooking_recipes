@@ -14,6 +14,7 @@ else{
 $Category=$_POST["category"];
 $Cuisine=$_POST["cuisine"];
 $Introduction=$_POST["introduction"];
+$Introduction=str_replace("'", "''", $Introduction);
 if (strlen($Introduction) > 150) {
             $$IntroductionError = "Introduction cannot exceed 150 words";
 }
@@ -26,7 +27,7 @@ else{
 }
 
 if ($RNameError == "" && $IntroductionError == "") {
-	$author=$_COOKIE["userid"];
+	$author=$_COOKIE["username"];
 $sql="INSERT INTO recipes (RName,Introduction,Imagepath,Category,Imagename,Cuisine,Author)VALUES('$RName','$Introduction','$imagepath','$Category','$imagename','$Cuisine','$author')";
 
 if (mysqli_query($db, $sql) or die(mysqli_error($db))) {
@@ -50,6 +51,7 @@ if (mysqli_query($db, $sql) or die(mysqli_error($db))) {
 	for ($j=1;$j<=$_COOKIE["stepcount"]-1;$j++){
 		$c = "step";
 		$step=$_POST[$c.$j];
+		$step=str_replace("'", "''", $step);
 		//echo($step);
 		$sql="INSERT INTO step (RID,Method)VALUES('$id','$step')";
 		mysqli_query($db, $sql);
@@ -73,5 +75,7 @@ else {
 	//$a = "ingredients";
 	//$b="1";
 	//echo ($_POST[$a.$b]);
-    echo($message);
+	$URL="/Function/Recipes_Upload/recipes_form.php";
+    echo("<script type='text/javascript'>alert('$message');location.href='$URL'</script>");
+	//echo($message);
 ?>

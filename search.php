@@ -47,6 +47,7 @@ createCookie("userid", userid, "10");
 function logout(){
 	sessionStorage.clear();
 	location.href="/Function/Search/search.php";
+	for (var it in $.cookie()) $.removeCookie(it);
 }
 </script>
 <body class="body">
@@ -95,10 +96,10 @@ Function printformat(){
 			echo("</table>");
 		echo("</form>");
 		echo("<br>");
-			echo("<table border='0' width='80%' class='center'>");
+			echo("<table border='0' width='60%' class='center'>");
 				echo("<tr>");
 				echo("<td width='20%'>Image</td>");
-				echo("<td width='30%'>Name</td>");
+				echo("<td width='10%'>Name</td>");
 				echo("<td width='10%'>Category</td>");
 				echo("<td width='10%'>Cuisine</td>");
 				echo("<td width='20%'>Introduction</td>");
@@ -197,36 +198,37 @@ if(isset($_GET['login'])){
 	}
 }
 else{
+    $cuisine=$array[$country];
     if (isset($_POST['search'])) {
+		echo("<h2><center>Result</center></h2>");
+		printformat();
 		$target = $_POST['search'];
-		$result = $conn->query("SELECT * FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%'");
+		$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Cuisine = '$cuisine'");
 		if ($result->num_rows > 0){ 
-			echo("<h2><center>Result</center></h2>");
-				printformat();
+				printrecipe($result);
+				$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Cuisine != '$cuisine'");
 				printrecipe($result);
 				echo("</table>");
 		}
 		else{
-			echo("<h2><center>Result</center></h2>");
-			printformat();
-			echo("</table>");
-			
+			$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Cuisine != '$cuisine'");
+			if ($result->num_rows > 0){ 
+				printrecipe($result);
+			}
+			echo("</table>");	
 		}
 	}
 	else {
-		$cuisine=$array[$country];
+		echo("<h2><center>Recipes</center></h2>");
+		printformat();
 		$result = $conn->query("SELECT * FROM recipes WHERE Cuisine = '$cuisine' ");
 		if ($result->num_rows > 0){ 
-			echo("<h2><center>Recipes</center></h2>");
-				printformat();
 				printrecipe($result);
 				$result = $conn->query("SELECT * FROM recipes WHERE Cuisine != '$cuisine' ");
 				printrecipe($result);
 				echo("</table>");
 		}
 		else{
-			echo("<h2><center>Result</center></h2>");
-			printformat();
 			$result = $conn->query("SELECT * FROM recipes WHERE Cuisine != '$cuisine' ");
 			if ($result->num_rows > 0){ 
 				printrecipe($result);

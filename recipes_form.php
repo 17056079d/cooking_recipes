@@ -1,7 +1,8 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <html lang="en">
 <script>
-var userid=sessionStorage["userid"];
+var username=sessionStorage["UN"];
+console.log(username);
 var stepcount =4;
 var Ingcount=4;
 function deleteIng(){
@@ -30,7 +31,7 @@ function addIng(){
 }
 function addStep(){
 	var stepName="step"+stepcount;
-	var step = document.getElementById('step').insertAdjacentHTML('beforeend', '<tr><th>'+stepcount+'</th><th><textarea name="'+stepName+'" cols="40" rows="2"></textarea></th></tr>');
+	var step = document.getElementById('step').insertAdjacentHTML('beforeend', '<tr><th>'+stepcount+'</th><th><textarea name="'+stepName+'" maxlength="950" cols="40" rows="7"></textarea></th></tr>');
 	stepcount ++;
 }
 function handin(){
@@ -51,7 +52,7 @@ function handin(){
 }
 createCookie("stepcount", stepcount, "10");
 createCookie("ingcount", Ingcount, "10");
-createCookie("userid", userid, "10");
+createCookie("username", username, "10");
 }
 </script>
 
@@ -66,6 +67,7 @@ createCookie("userid", userid, "10");
     <option value="drink">drink</option>
     <option value="vegetarian">vegetarian</option>
     <option value="dishes">dishes</option>
+	<option value="soup">soup</option>
     <option value="baking">baking</option>
   </select><br />
 		Cuisine: <select name="cuisine">
@@ -80,7 +82,7 @@ createCookie("userid", userid, "10");
 	<option value="Mexican">Mexican</option>
 	<option value="Global">Global</option>
   </select><br />
-      Introduction: <br /><textarea maxlength="300" name="introduction" cols="40" rows="5"></textarea><br />
+      Introduction: <br /><textarea maxlength="1450" name="introduction" cols="40" rows="5"></textarea><br />
       image: <input type="file" name="myimage" id="myimage"/><br />
 	  Ingredients:
 	  <table id = "ingredients">
@@ -112,15 +114,15 @@ createCookie("userid", userid, "10");
 	  </tr>
 	  <tr>
 	  <th>1</th>
-	  <th><textarea name="step1" cols="40" rows="2"></textarea></th>
+	  <th><textarea name="step1" maxlength="950" cols="40" rows="7"></textarea></th>
 	  </tr>
 	  <tr>
 	  <th>2</th>
-	  <th><textarea name="step2" cols="40" rows="2"></textarea></th>
+	  <th><textarea name="step2" maxlength="950" cols="40" rows="7"></textarea></th>
 	  </tr>
 	  <tr>
 	  <th>3</th>
-	  <th><textarea name="step3" cols="40" rows="2"></textarea></th>
+	  <th><textarea name="step3" maxlength="950" cols="40" rows="7"></textarea></th>
 	  </tr>
 	  </table>
 	  <input type="button" value="+" class="step" onclick="addStep()"/>
