@@ -63,9 +63,26 @@ $re = $recipe->fetch_assoc();
 				} 
                 ?>
 </tr>
+			</table>
+			<table width="60%" class="center" >
 <tr>
-    <td colspan="2"><h3>Suggestion</h3> </td>
+    <td colspan="2"><h3>Search for similar recipe by: </h3> </td>
 </tr>
+<td>
+	<form action="compare.php">
+				<input type="checkbox" id="author" name="author" value="Author">
+				<label for="author">Author</label>&nbsp;
+				<input type="checkbox" id="category" name="category" value="Category">
+				<label for="author">Category</label>&nbsp;
+				<input type="checkbox" id="cuisine" name="cuisine" value="Cuisine">
+				<label for="author">Cuisine</label>&nbsp;
+				<input type="checkbox" id="ingredients" name="ingredients" value="ingredients">
+				<label for="author">Ingredients</label>&nbsp;
+				<input type="checkbox" id="name" name="name" value="RName">
+				<label for="author">Recipe Name</label>
+				
+			</form>
+			</td>
 
 </table>
 
