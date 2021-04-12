@@ -76,16 +76,18 @@ $re = $recipe->fetch_assoc();
 </tr>
 <td>
 	<?php echo("<form method='post' action='/Function/Compare/compare.php?id=$rid'>")?>
-				<input type="checkbox" id="author" name="author" value="Author">
-				<label for="author">Author</label>&nbsp;
-				<input type="checkbox" id="category" name="category" value="Category">
-				<label for="author">Category</label>&nbsp;
-				<input type="checkbox" id="cuisine" name="cuisine" value="Cuisine">
-				<label for="author">Cuisine</label>&nbsp;
-				<input type="checkbox" id="ingredients" name="ingredients" value="ingredients">
-				<label for="author">Ingredients</label>&nbsp;
-				<input type="checkbox" id="name" name="name" value="RName">
-				<label for="author">Recipe Name</label>
+				<input type="checkbox" id="Introduction" name="Introduction" value="Introduction">
+				<label for="Introduction">Introduction</label>&nbsp;
+				<input type="checkbox" id="Category" name="Category" value="Category">
+				<label for="Category">Category</label>&nbsp;
+				<input type="checkbox" id="Cuisine" name="Cuisine" value="Cuisine">
+				<label for="Cuisine">Cuisine</label>&nbsp;
+				<input type="checkbox" id="Ingredients" name="Ingredients" value="Ingredients">
+				<label for="Ingredients">Ingredients</label>&nbsp;
+				<input type="checkbox" id="RName" name="RName" value="RName">
+				<label for="RName">Recipe Name</label>
+				<input type="checkbox" id="Step" name="Step" value="Step">
+				<label for="Step">Step</label>
 				<br><br>
 				<button>Find</button>
 			</form>

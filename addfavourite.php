@@ -3,7 +3,9 @@ include("config.php");
 $db = mysqli_connect(DB_SERVER,DB_USERNAME,DB_PASSWORD, "cooking_recipes");
 $Uid=$_COOKIE["userid"];
 $Rid=$_GET['id'];
-$display=$_GET['display'];
+if(isset($_GET['display'])){
+	$display=$_GET['display'];
+}
 if($Uid!="undefined"){
 	$sql="INSERT INTO favourite (RID,UID)VALUES('$Rid','$Uid')";
 	mysqli_query($db, $sql);
