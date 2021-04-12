@@ -58,19 +58,31 @@ createCookie("username", username, "10");
 
 <head>
   <title>Recipes Uploads</title>
+  <link rel="stylesheet" href="formstyle.css" type="text/css">
 </head>
-<body>
-  <h1>Uploads</h1>
+<body class="body">
+  <center><h1>Uploads</h1></center>
     <form action="store_image.php" method="POST" enctype="multipart/form-data" id="upload">
-      Recipes Name: <input type="text" name="rname" /><br />
-      Category: <select name="category">
+    <table  class="center">
+<tr>
+<td colspan="2">
+	Recipes Name: <input type="text" name="rname" /><br />
+</td>
+</tr>
+<tr>
+<td colspan="2">
+	Category: <select name="category">
     <option value="drink">drink</option>
     <option value="vegetarian">vegetarian</option>
     <option value="dishes">dishes</option>
 	<option value="soup">soup</option>
     <option value="baking">baking</option>
   </select><br />
-		Cuisine: <select name="cuisine">
+</td>
+</tr>
+<tr>
+<td colspan="2">
+	Cuisine: <select name="cuisine">
     <option value="Chinese">Chinese</option>
     <option value="Thai">Thai</option>
     <option value="Spanish">Spanish</option>
@@ -82,10 +94,23 @@ createCookie("username", username, "10");
 	<option value="Mexican">Mexican</option>
 	<option value="Global">Global</option>
   </select><br />
-      Introduction: <br /><textarea maxlength="1450" name="introduction" cols="40" rows="5"></textarea><br />
-      image: <input type="file" name="myimage" id="myimage"/><br />
-	  Ingredients:
-	  <table id = "ingredients">
+</td>
+</tr>
+<tr>
+<td colspan="2">
+	Introduction: <br /><textarea maxlength="1450" name="introduction" cols="40" rows="5"></textarea><br />
+</td>
+</tr>
+<tr>
+<td colspan="2">
+	image: <input type="file" name="myimage" id="myimage"/><br />
+	  
+</td>
+</tr>
+<tr>
+<td colspan="2">
+	 Ingredients:
+	  <table class="center" id = "ingredients">
 	  <tr>
 	  <th>Item</th>
 	  <th>Name</th>
@@ -104,9 +129,14 @@ createCookie("username", username, "10");
 	  <th><textarea name="ingredients3" cols="40" rows="2"></textarea></th><th><textarea name="amount3" cols="10" ></textarea></th>
 	  </tr>
 	  </table>
-	  <input type="button" class="Ing" value="+" onclick="addIng()"/>
-	  <input type="button" class="Ing" value="-" onclick="deleteIng()"/><br>
-	  Step:
+	  <input style="height: 1.5em;border-radius: 10px;line-height: 2em;" type="button" class="Ing" value="+" onclick="addIng()"/>
+	  <input style="height: 1.5em;border-radius: 10px;line-height: 2em;" type="button" class="Ing" value="-" onclick="deleteIng()"/><br>
+	  
+</td>
+</tr>
+<tr>
+<td colspan="2">
+	Step:
 	  <table id = "step">
 	  <tr>
 	  <th>Step</th>
@@ -125,9 +155,20 @@ createCookie("username", username, "10");
 	  <th><textarea name="step3" maxlength="950" cols="40" rows="7"></textarea></th>
 	  </tr>
 	  </table>
-	  <input type="button" value="+" class="step" onclick="addStep()"/>
-	  <input type="button" value="-" class="step" onclick="deleteStep()"/><br>
-      <input type="submit" value="Upload" onclick="handin()"/>
+	  <input style="height: 1.5em;border-radius: 10px;line-height: 2em;" type="button" value="+" class="step" onclick="addStep()"/>
+	  <input style="height: 1.5em;border-radius: 10px;line-height: 2em;" type="button" value="-" class="step" onclick="deleteStep()"/><br>
+      
+</td>
+</tr>
+<tr>
+<td align="left">
+	<input type="submit" value="Upload" onclick="handin()"/>
+</td>
+<td align="right">
+          <input type="button" value="Back" name="back" onclick="javascript:location.href='/Function/Search/search.php'" />
+        </td>
+</tr>     
+</table>
     </form>
 </body>
 </html>
