@@ -22,11 +22,6 @@ require 'db.php';
 </head>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script>
-function remind(){
-	if (sessionStorage["userid"] == null){
-		alert("Please login to add this recipes to favourite");
-	}
-}
 var userid=sessionStorage["userid"];
 function createCookie(name, value, days) {
     var expires;
@@ -125,11 +120,14 @@ if(isset($_GET['login'])){
 	echo("<h2><center>Result</center></h2>");
 	printformat();
 	if ($_GET['login']==true){
+		$uid=$_GET['uid'];
+		$countfav=$conn->query("SELECT COUNT(*) FROM favourite WHERE UID=$uid");
+		$rows = $countfav->fetch_assoc();
+		if ($rows['COUNT(*)'] > 0){
 		if (isset($_POST['search'])) {
 		$target = $_POST['search'];
-		$uid=$_GET['uid'];
-		$cui =$conn->query("SELECT COUNT(*),Cuisine FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=1 GROUP BY Cuisine Order By COUNT(*) DESC");
-		$cat =$conn->query("SELECT COUNT(*),Category FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=1 GROUP BY Category Order By COUNT(*) DESC");
+		$cui =$conn->query("SELECT COUNT(*),Cuisine FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=$uid GROUP BY Cuisine Order By COUNT(*) DESC");
+		$cat =$conn->query("SELECT COUNT(*),Category FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=$uid GROUP BY Category Order By COUNT(*) DESC");
 		if ($cui->num_rows > 0 and $cat->num_rows > 0){ 
 			if($rows = $cui->fetch_assoc() and $rows2 = $cat->fetch_assoc()){
 				$countcui=$rows['COUNT(*)'];
@@ -165,7 +163,7 @@ if(isset($_GET['login'])){
 					if ($result->num_rows > 0){
 						printrecipe($result);
 					}
-					$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Category='$maxcat'");
+					$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Category!='$maxcat'");
 					if ($result->num_rows > 0){
 						printrecipe($result);
 					}
@@ -175,9 +173,79 @@ if(isset($_GET['login'])){
 		echo("</table>");
 	}
 	else {
+		$uid=$_GET['uid'];
+		$cui =$conn->query("SELECT COUNT(*),Cuisine FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=$uid GROUP BY Cuisine Order By COUNT(*) DESC");
+		$cat =$conn->query("SELECT COUNT(*),Category FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=$uid GROUP BY Category Order By COUNT(*) DESC");
+		if ($cui->num_rows > 0 and $cat->num_rows > 0){ 
+			if($rows = $cui->fetch_assoc() and $rows2 = $cat->fetch_assoc()){
+				$countcui=$rows['COUNT(*)'];
+				$maxcui=$rows['Cuisine'];
+				//echo($rows['COUNT(*)']);
+				//echo($rows['Cuisine']);
+				$countcat=$rows2['COUNT(*)'];
+				$maxcat=$rows2['Category'];
+				//echo($rows2['COUNT(*)']);
+				//echo($rows2['Category']);
+				if($countcui==$countcat){
+					$result = $conn->query("SELECT * FROM recipes WHERE Category='$maxcat' and Cuisine='$maxcui'");
+					if ($result->num_rows > 0){
+						printrecipe($result);
+					}
+					$result = $conn->query("SELECT * FROM recipes WHERE Category!='$maxcat' or Cuisine!='$maxcui'");
+					if ($result->num_rows > 0){
+						printrecipe($result);
+					}
+				}
+				else if ($countcui>$countcat){
+					$result = $conn->query("SELECT * FROM recipes WHERE Cuisine='$maxcui'");
+					if ($result->num_rows > 0){
+						printrecipe($result);
+					}
+					$result = $conn->query("SELECT * FROM recipes WHERE Cuisine!='$maxcui'");
+					if ($result->num_rows > 0){
+						printrecipe($result);
+					}
+				}
+				else if ($countcui<$countcat){
+					$result = $conn->query("SELECT * FROM recipes WHERE Category='$maxcat'");
+					if ($result->num_rows > 0){
+						printrecipe($result);
+					}
+					$result = $conn->query("SELECT * FROM recipes WHERE Category='$maxcat'");
+					if ($result->num_rows > 0){
+						printrecipe($result);
+					}
+				}
+			}
+		}
+		else{
+			echo("fail");
+		}
+		echo("</table>");
+	}
+	}
+	else{
 		$cuisine=$array[$country];
+    if (isset($_POST['search'])) {
+		$target = $_POST['search'];
+		$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Cuisine = '$cuisine'");
+		if ($result->num_rows > 0){ 
+				printrecipe($result);
+				$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Cuisine != '$cuisine'");
+				printrecipe($result);
+				echo("</table>");
+		}
+		else{
+			$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Cuisine != '$cuisine'");
+			if ($result->num_rows > 0){ 
+				printrecipe($result);
+			}
+			echo("</table>");	
+		}
+	}
+	else {
 		$result = $conn->query("SELECT * FROM recipes WHERE Cuisine = '$cuisine' ");
-		if ($result->num_rows > 0){ 	
+		if ($result->num_rows > 0){ 
 				printrecipe($result);
 				$result = $conn->query("SELECT * FROM recipes WHERE Cuisine != '$cuisine' ");
 				printrecipe($result);
@@ -191,9 +259,10 @@ if(isset($_GET['login'])){
 			}
 			else{
 				echo("</table>");
-				echo("<h3><center>No result</center></h3>");
+				
 			}
 		}
+	}
 	}
 	}
 }

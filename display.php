@@ -24,7 +24,12 @@ require 'db.php';
 </head>
 <body>
 <?php
-$rid = $_POST['rid'];
+if(isset($_POST['rid'])){
+	$rid = $_POST['rid'];
+}
+if(empty($rid)){
+	$rid = $_GET['id'];
+}
 $recipe = $conn->query("SELECT * FROM recipes where RID = '$rid'");
 $ingredients = $conn->query("SELECT * from ingredients where RID = '$rid' ");
 $step = $conn->query("SELECT * FROM step where RID = '$rid' order by SID ASC");
@@ -39,7 +44,8 @@ $re = $recipe->fetch_assoc();
             
         </td>
 </tr>
-<tr><td><form method="post" action="addfavourite.php?id=$rid&display=true">
+<tr><td>
+<?php echo("<form method='post' action='addfavourite.php?id=$rid&display=true'>")?>
 					<input type="hidden" name="rid" value="<?= $rid ?>"></input>
 					<h5><button>Favourite</button></h5>
 				</form></td></tr>
