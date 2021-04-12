@@ -50,9 +50,8 @@ function logout(){
 <button id = "login" onclick="location.href = '/Function/Login/login_form.php';">Log in</button>
 <button id = "upload" onclick="location.href = '/Function/Recipes_Upload/recipes_form.php';">Upload</button>
 <button id = "logout" onclick="logout();">logout</button>
-<form id='delfav' method='post' action='favourite.php?id=".<?php $uid?>."'>
-	<button id ='favourite'>Favourite</button>
-		</form>
+<button id = "favourite" onclick="location.href = '/Function/Search/favourite.php';">Favourite</button>
+
 <?php	
 Function printrecipe($result){
 				while($rows = $result->fetch_assoc()){

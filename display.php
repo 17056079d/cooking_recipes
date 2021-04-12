@@ -8,8 +8,8 @@ require 'db.php';
 <title>Recipes</title>
 	<link rel="stylesheet" href="style.css" type="text/css">
 	<style>
-    ol.a {list-style-type: decimal;text-align:left}
-    ol.b {list-style-type: inherit;text-align:left}
+    ol{text-align:left}
+    ul{text-align:left}
 	table {
 		border-collapse: collapse;
     }
@@ -53,20 +53,22 @@ $re = $recipe->fetch_assoc();
 <tr>
     <td valign="top">
         <h4>Ingredients</h4>
-    <?php while($in = $ingredients->fetch_assoc()){
-				echo("<ol class='b'>");
+    <?php echo("<ul>");
+	while($in = $ingredients->fetch_assoc()){
+				
                 echo("<li>".$in['InName'].' '.$in['Amount']."</li>");
-				echo("</ol>");
-				} 
+				
+				} echo("</ul>");
                 ?>
 </td>
       
 <td>
-    <?php while($st = $step->fetch_assoc()){
-				echo("<ol class='a'>");
+    <?php echo("<ol>");
+	while($st = $step->fetch_assoc()){
+				
                 echo("<li>".$st['Method']."</li>");
-				echo("</ol>");
-				} 
+				
+				} echo("</ol>");
                 ?>
 </tr>
 			</table>
