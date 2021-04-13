@@ -80,8 +80,6 @@ $Uid=$_GET['uid'];
 				echo("</td>");
 				echo("</tr>");
 				}
-				
-
                 echo("</table>");
 }
                 
