@@ -127,7 +127,22 @@ function logout(){
 <body>
 <div class="menu">
   <p>Category</p>
+	<a href="list.php?Category=drink">drink</a>
+	<a href="list.php?Category=vegetarian">vegetarian</a>
+	<a href="list.php?Category=dishes">dishes</a>
+	<a href="list.php?Category=soup">soup</a>
+	<a href="list.php?Category=baking">baking</a>
   <p>Cuisine</p>
+  <a href="list.php?Cuisine=Chinese">Chinese</a>
+  <a href="list.php?Cuisine=Thai">Thai</a>
+  <a href="list.php?Cuisine=Spanish">Spanish</a>
+  <a href="list.php?Cuisine=Swedish">Swedish</a>
+  <a href="list.php?Cuisine=Indian">Indian</a>
+  <a href="list.php?Cuisine=German">German</a>
+  <a href="list.php?Cuisine=Japanese">Japanese</a>
+  <a href="list.php?Cuisine=ltalian">ltalian</a>
+  <a href="list.php?Cuisine=Mexican">Mexican</a>
+  <a href="list.php?Cuisine=Global">Global</a>
 </div>
 <div class="menu__toggler"><span></span></div>
   <script >
@@ -166,16 +181,19 @@ Function printrecipe($result){
 				echo($rows['RName']);
 				echo("</td>");
 				echo("<td>");
-				echo($rows['Category']);
+				$Category=$rows['Category'];
+				echo("<a href='list.php?Category=$Category'>".$Category."</a>");
 				echo("</td>");
 				echo("<td>");
-				echo($rows['Cuisine']);
+				$Cuisine=$rows['Cuisine'];
+				echo("<a href='list.php?Cuisine=$Cuisine'>".$Cuisine."</a>");
 				echo("</td>");
 				echo("<td>");
 				echo($rows['Introduction']);
 				echo("</td>");
 				echo("<td>");
-				echo($rows['Author']);
+				$Author=$rows['Author'];
+				echo("<a href='list.php?Author=$Author'>".$Author."</a>");
 				echo("</td>");
 				echo("<td>");
 				echo($rows['Clickrate']);

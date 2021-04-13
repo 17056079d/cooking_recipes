@@ -26,31 +26,35 @@ $Uid=$_GET['uid'];
 	</style>
 	</head>
 	<body class="body">
-        <table><tr><td align="left">
+        
 		<?php
 		$URL="/Function/Search/search.php?login=true&uid=$Uid";
 		echo("<script>function back(){location.href='$URL'}</script>");
 		echo("<input type='button' value='Back' name='back' onclick='back();' />");
 	?>
-        </td></tr></table>
+
         <?php
-        
-        $result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM favourite WHERE UID='$Uid')");
-    if ($result->num_rows > 0){
-
-
-    echo("<table border='0' width='60%' class='center'>");
-    
-    
-    echo("<th colspan='6'>Favourite</th>");
-    echo("<tr>");
-    echo("<td width='20%'>Image</td>");
-    echo("<td width='20%'>Name</td>");
-    echo("<td width='10%'>Category</td>");
-    echo("<td width='10%'>Cuisine</td>");
-    echo("<td width='20%'>Introduction</td>");
-    echo("<td width='10%'>Favourite</td>");
-    echo("</tr>");
+		Function printformat(){
+	echo("<form method='post' action=''>");
+			echo("<table class='center'>");
+					echo("<td><input type='text' name='search'></td>");
+					echo("<td><h6><input type='submit' value='search' name='submit'></h6></td>");
+			echo("</table>");
+		echo("</form>");
+		echo("<br>");
+			echo("<table border='0' width='80%' class='center'>");
+				echo("<tr>");
+				echo("<td width='20%'>Image</td>");
+				echo("<td width='10%'>Name</td>");
+				echo("<td width='10%'>Category</td>");
+				echo("<td width='10%'>Cuisine</td>");
+				echo("<td width='20%'>Introduction</td>");
+				echo("<td width='10%'>Author</td>");
+				echo("<td width='10%'>Clickrate</td>");
+				echo("<td width='10%'>Favourite</td>");
+				echo("</tr>");
+}
+Function printrecipe($result){
 				while($rows = $result->fetch_assoc()){
 					echo("<tr>");
 				echo("<td>");
@@ -64,28 +68,41 @@ $Uid=$_GET['uid'];
 				echo($rows['RName']);
 				echo("</td>");
 				echo("<td>");
-				echo($rows['Category']);
+				$Category=$rows['Category'];
+				echo("<a href='list.php?Category=$Category'>".$Category."</a>");
 				echo("</td>");
 				echo("<td>");
-				echo($rows['Cuisine']);
+				$Cuisine=$rows['Cuisine'];
+				echo("<a href='list.php?Cuisine=$Cuisine'>".$Cuisine."</a>");
 				echo("</td>");
 				echo("<td>");
 				echo($rows['Introduction']);
 				echo("</td>");
 				echo("<td>");
+				$Author=$rows['Author'];
+				echo("<a href='list.php?Author=$Author'>".$Author."</a>");
+				echo("</td>");
+				echo("<td>");
+				echo($rows['Clickrate']);
+				echo("</td>");
+				echo("<td>");
 				$rid=$rows['RID'];
-				echo("<form id='delfav' method='post' action='delfavourite.php?rid=".$rid."&uid=".$Uid."'>");
-				echo("<h5><button onclick='remind()'>UnFavourite</button></h5>");
+				echo("<form id='addfav' method='post' action='addfavourite.php?id=".$rid."'>");
+				echo("<h5><button onclick='remind()'>Favourite</button></h5>");
 				echo("</form>");
 				echo("</td>");
 				echo("</tr>");
 				}
-                echo("</table>");
-}
-                
-
-
-                        ?>
+				
+}       
+        $result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM favourite WHERE UID='$Uid')");
+		echo("<h2><center>Favourite</center></h2>");
+		printformat();
+		if ($result->num_rows > 0){
+			printrecipe($result);
+			echo("</table>");
+		}
+?>
                         
                 </body>
 </html>
