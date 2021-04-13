@@ -24,6 +24,16 @@ require 'db.php';
 </head>
 <body>
 <?php
+if(isset($_COOKIE["userid"])&$_COOKIE["userid"]!="undefined"){
+	$Uid=$_COOKIE["userid"];
+	$URL="/Function/Search/search.php?login=true&uid=$Uid";
+}
+else{
+	$URL="/Function/Search/search.php";
+}
+
+echo("<script>function back(){location.href='$URL'}</script>");
+echo("<input type='button' value='Back' name='back' onclick='back();' />");
 if(isset($_POST['rid'])){
 	$rid = $_POST['rid'];
 }
