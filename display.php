@@ -8,8 +8,8 @@ require 'db.php';
 <title>Recipes</title>
 	<link rel="stylesheet" href="style.css" type="text/css">
 	<style>
-    ol.a {list-style-type: decimal;text-align:left}
-    ol.b {list-style-type: inherit;text-align:left}
+    ol{text-align:left}
+    ul{text-align:left}
 	table {
 		border-collapse: collapse;
     }
@@ -24,22 +24,61 @@ require 'db.php';
 </head>
 <body>
 <?php
-$rid = $_POST['rid'];
+if(isset($_COOKIE["userid"])&$_COOKIE["userid"]!="undefined"){
+	$Uid=$_COOKIE["userid"];
+	$URL="/Function/Search/search.php?login=true&uid=$Uid";
+}
+else{
+	$URL="/Function/Search/search.php";
+}
+
+echo("<script>function back(){location.href='$URL'}</script>");
+echo("<input type='button' value='Back' name='back' onclick='back();' />");
+if(isset($_POST['rid'])){
+	$rid = $_POST['rid'];
+}
+if(empty($rid)){
+	$rid = $_GET['id'];
+}
 $recipe = $conn->query("SELECT * FROM recipes where RID = '$rid'");
 $ingredients = $conn->query("SELECT * from ingredients where RID = '$rid' ");
 $step = $conn->query("SELECT * FROM step where RID = '$rid' order by SID ASC");
 $re = $recipe->fetch_assoc();
+$Category=$re['Category'];
+$Cuisine=$re['Cuisine'];
+$new=$re['Clickrate']+1;
+$conn->query("update recipes SET Clickrate='$new' WHERE RID = '$rid'");
 
 ?>
+<div style="text-align: center;">
+<h3>Search for similar recipe by: </h3>
+<?php echo("<form method='post' action='/Function/Compare/compare.php?id=$rid'>")?>
+				<input type="checkbox" id="Introduction" name="Introduction" value="Introduction">
+				<label for="Introduction">Introduction</label>&nbsp;
+				<input type="checkbox" id="Category" name="Category" value="Category">
+				<label for="Category">Category</label>&nbsp;
+				<input type="checkbox" id="Cuisine" name="Cuisine" value="Cuisine">
+				<label for="Cuisine">Cuisine</label>&nbsp;
+				<input type="checkbox" id="Ingredients" name="Ingredients" value="Ingredients">
+				<label for="Ingredients">Ingredients</label>&nbsp;
+				<input type="checkbox" id="RName" name="RName" value="RName">
+				<label for="RName">Recipe Name</label>
+				<input type="checkbox" id="Step" name="Step" value="Step">
+				<label style="padding-right: 20px;"for="Step">Step</label>
+				<button>Find</button>
+			</form>
+			</div>
 <center><h2><?php echo($re["RName"]); ?></h2></center>
 <table width="60%" class="center">
+			
     <tr>
         <td width="30%" rowspan="3"><?php echo("<img src='../../".$re['Imagename']."'"."width='300pt' height='300pt'");?></td>
             <td valign="top" style="text-align:left"> &nbsp;&nbsp;By <?php echo($re["Author"]); ?></td>
             
         </td>
 </tr>
-<tr><td><form method="post" action="addfavourite.php">
+<tr><td>
+<?php echo("<form method='post' action='addfavourite.php?id=$rid&display=true'>")?>
 					<input type="hidden" name="rid" value="<?= $rid ?>"></input>
 					<h5><button>Favourite</button></h5>
 				</form></td></tr>
@@ -47,28 +86,37 @@ $re = $recipe->fetch_assoc();
 <tr>
     <td valign="top">
         <h4>Ingredients</h4>
-    <?php while($in = $ingredients->fetch_assoc()){
-				echo("<ol class='b'>");
+    <?php echo("<ul>");
+	while($in = $ingredients->fetch_assoc()){
+				
                 echo("<li>".$in['InName'].' '.$in['Amount']."</li>");
-				echo("</ol>");
-				} 
+				
+				} echo("</ul>");
                 ?>
 </td>
       
 <td>
-    <?php while($st = $step->fetch_assoc()){
-				echo("<ol class='a'>");
+    <?php echo("<ol>");
+	while($st = $step->fetch_assoc()){
+				
                 echo("<li>".$st['Method']."</li>");
-				echo("</ol>");
-				} 
+				
+				} echo("</ol>");
                 ?>
 </tr>
-<tr>
-    <td colspan="2"><h3>Suggestion</h3> </td>
-</tr>
-
-</table>
-
+			</table>
+<?php
+			echo("<h3><center>Recommendation</center></h3>");
+echo("<table border='0' width='60%' class='center'>");
+echo("<tr>");
+$pass1=$conn->query("SELECT RID,Imagename FROM recipes WHERE Category='$Category' or Cuisine='$Cuisine'");
+if ($pass1->num_rows > 4){ 
+	$cui =$conn->query("SELECT COUNT(*),Cuisine FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=$uid GROUP BY Cuisine Order By COUNT(*) DESC");
+	$cat =$conn->query("SELECT COUNT(*),Category FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=$uid GROUP BY Category Order By COUNT(*) DESC");
+}
+echo("</tr>");
+echo("</table>");
+?>
 
     </body>
         
