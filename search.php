@@ -50,9 +50,14 @@ function logout(){
 <button id = "login" onclick="location.href = '/Function/Login/login_form.php';">Log in</button>
 <button id = "upload" onclick="location.href = '/Function/Recipes_Upload/recipes_form.php';">Upload</button>
 <button id = "logout" onclick="logout();">logout</button>
-<button id = "favourite" onclick="location.href = '/Function/Search/favourite.php';">Favourite</button>
+<?php
+if(isset($_GET['uid'])){
+$uid=$_GET['uid'];
+$URL="/Function/Search/favourite.php?uid=$uid";
+echo("<script>function fav(){location.href='$URL'}</script>");
+}
 
-<?php	
+echo("<button id = 'favourite' onclick='fav();'>Favourite</button>");	
 Function printrecipe($result){
 				while($rows = $result->fetch_assoc()){
 					echo("<tr>");
@@ -122,7 +127,6 @@ if(isset($_GET['login'])){
 	echo("<h2><center>Result</center></h2>");
 	printformat();
 	if ($_GET['login']==true){
-		$uid=$_GET['uid'];
 		$countfav=$conn->query("SELECT COUNT(*) FROM favourite WHERE UID=$uid");
 		$rows = $countfav->fetch_assoc();
 		if ($rows['COUNT(*)'] > 0){
@@ -317,6 +321,7 @@ else{
 if (sessionStorage["userid"] == null){
     document.getElementById("upload").style.display = "none";
 	document.getElementById("logout").style.display = "none";
+	document.getElementById("favourite").style.display = "none";
 	
 }
 if (sessionStorage["userid"] != null){

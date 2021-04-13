@@ -27,7 +27,11 @@ $Uid=$_GET['uid'];
 	</head>
 	<body class="body">
         <table><tr><td align="left">
-    <input type="button" value="Back" name="back" onclick="javascript:location.href='/Function/Search/search.php'" />
+		<?php
+		$URL="/Function/Search/search.php?login=true&uid=$Uid";
+		echo("<script>function back(){location.href='$URL'}</script>");
+		echo("<input type='button' value='Back' name='back' onclick='back();' />");
+	?>
         </td></tr></table>
         <?php
         
@@ -70,7 +74,7 @@ $Uid=$_GET['uid'];
 				echo("</td>");
 				echo("<td>");
 				$rid=$rows['RID'];
-				echo("<form id='delfav' method='post' action='delfavourite.php?id=".$rid."'>");
+				echo("<form id='delfav' method='post' action='delfavourite.php?rid=".$rid."&uid=".$Uid."'>");
 				echo("<h5><button onclick='remind()'>UnFavourite</button></h5>");
 				echo("</form>");
 				echo("</td>");
