@@ -198,7 +198,7 @@ Function printformat(){
 			echo("</table>");
 		echo("</form>");
 		echo("<br>");
-			echo("<table border='0' width='60%' class='center'>");
+			echo("<table border='0' width='80%' class='center'>");
 				echo("<tr>");
 				echo("<td width='20%'>Image</td>");
 				echo("<td width='10%'>Name</td>");
@@ -209,6 +209,42 @@ Function printformat(){
 				echo("<td width='10%'>Clickrate</td>");
 				echo("<td width='10%'>Favourite</td>");
 				echo("</tr>");
+}
+Function NoFavRec(){
+	$result = $conn->query("SELECT RID,Imagename FROM recipes WHERE Cuisine = '$cuisine' Order By Clickrate DESC");
+	if ($result->num_rows > 0){ 
+		printfullrecommendation($result);
+	}
+	else{
+		$result = $conn->query("SELECT RID,Imagename FROM recipes Order By Clickrate DESC");
+		if ($result->num_rows > 0){ 
+			printfullrecommendation($result);
+		}
+	}
+}
+Function printfullrecommendation($result){
+	echo("<br><br><h3><center>Recommendation</center></h3>");
+	echo("<table border='0' width='80%' class='center'>");
+	echo("<tr>");
+	printrecommendation($result);
+	echo("</tr>");
+	echo("</table><br>");
+}
+Function printrecommendation($result){
+	$stop=0;
+	while($rows = $result->fetch_assoc() and $stop!=4){
+	echo("<td>");
+$RID=$rows['RID'];
+$Image=$rows['Imagename'];
+$RName=$rows['RName'];
+echo("<form method='post' action='display.php'> ");
+echo("<input type='hidden' name='rid' value='$RID'>");
+echo("<input type='image' src='../../$Image'alt='Submit' width='200pt' height='200pt'>");
+echo("</form>");
+echo($RName);
+echo("</td>");
+$stop++;
+}
 }
 $query = @unserialize(file_get_contents('http://ip-api.com/php/'));
 if($query && $query['status'] == 'success') {
@@ -226,28 +262,24 @@ $array = array(
 	"Mexico" => "Mexican",
 );
 $cuisine=$array[$country];
-if(isset($_GET['login'])){
+if(isset($_GET['login'])){//if loggined
 	echo("<h2><center>Result</center></h2>");
 	printformat();
 	if ($_GET['login']==true){
 		$countfav=$conn->query("SELECT COUNT(*) FROM favourite WHERE UID=$uid");
 		$rows = $countfav->fetch_assoc();
-		if ($rows['COUNT(*)'] > 0){
-		if (isset($_POST['search'])) {
+		if ($rows['COUNT(*)'] > 0){//if there is any record in favourite of the loggined user
+		if (isset($_POST['search'])) {//if the user search anything
 		$target = $_POST['search'];
 		$cui =$conn->query("SELECT COUNT(*),Cuisine FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=$uid GROUP BY Cuisine Order By COUNT(*) DESC");
 		$cat =$conn->query("SELECT COUNT(*),Category FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=$uid GROUP BY Category Order By COUNT(*) DESC");
-		if ($cui->num_rows > 0 and $cat->num_rows > 0){ 
+		if ($cui->num_rows > 0 and $cat->num_rows > 0){ //if there is record match the favourite of user
 			if($rows = $cui->fetch_assoc() and $rows2 = $cat->fetch_assoc()){
 				$countcui=$rows['COUNT(*)'];
 				$maxcui=$rows['Cuisine'];
-				//echo($rows['COUNT(*)']);
-				//echo($rows['Cuisine']);
 				$countcat=$rows2['COUNT(*)'];
 				$maxcat=$rows2['Category'];
-				//echo($rows2['COUNT(*)']);
-				//echo($rows2['Category']);
-				if($countcui==$countcat){
+				if($countcui==$countcat){//if the max count of cuisine = category
 					$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Category='$maxcat' and Cuisine='$maxcui'");
 					if ($result->num_rows > 0){
 						printrecipe($result);
@@ -256,8 +288,16 @@ if(isset($_GET['login'])){
 					if ($result->num_rows > 0){
 						printrecipe($result);
 					}
+					echo("</table>");
+					$result = $conn->query("SELECT RID,RName,Imagename FROM recipes WHERE Category='$maxcat' and Cuisine='$maxcui' Order By Clickrate DESC");
+					if ($result->num_rows > 0){ 
+						printfullrecommendation($result);
+					}
+					else{
+						NoFavRec();
+					}
 				}
-				else if ($countcui>$countcat){
+				else if ($countcui>$countcat){//if the max count of cuisine > category
 					$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Cuisine='$maxcui'");
 					if ($result->num_rows > 0){
 						printrecipe($result);
@@ -266,8 +306,16 @@ if(isset($_GET['login'])){
 					if ($result->num_rows > 0){
 						printrecipe($result);
 					}
+					echo("</table>");
+					$result = $conn->query("SELECT RID,RName,Imagename FROM recipes WHERE Cuisine='$maxcui' Order By Clickrate DESC");
+					if ($result->num_rows > 0){ 
+						printfullrecommendation($result);
+					}
+					else{
+						NoFavRec();
+					}
 				}
-				else if ($countcui<$countcat){
+				else if ($countcui<$countcat){//if the max count of cuisine < category
 					$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Category='$maxcat'");
 					if ($result->num_rows > 0){
 						printrecipe($result);
@@ -276,12 +324,19 @@ if(isset($_GET['login'])){
 					if ($result->num_rows > 0){
 						printrecipe($result);
 					}
+					echo("</table>");
+					$result = $conn->query("SELECT RID,RName,Imagename FROM recipes WHERE Category='$maxcat' Order By Clickrate DESC");
+					if ($result->num_rows > 0){ 
+						printfullrecommendation($result);
+					}
+					else{
+						NoFavRec();
+					}
 				}
 			}
 		}
-		echo("</table>");
 	}
-	else {
+	else {//the default page after login
 		$uid=$_GET['uid'];
 		$cui =$conn->query("SELECT COUNT(*),Cuisine FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=$uid GROUP BY Cuisine Order By COUNT(*) DESC");
 		$cat =$conn->query("SELECT COUNT(*),Category FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=$uid GROUP BY Category Order By COUNT(*) DESC");
@@ -289,12 +344,8 @@ if(isset($_GET['login'])){
 			if($rows = $cui->fetch_assoc() and $rows2 = $cat->fetch_assoc()){
 				$countcui=$rows['COUNT(*)'];
 				$maxcui=$rows['Cuisine'];
-				//echo($rows['COUNT(*)']);
-				//echo($rows['Cuisine']);
 				$countcat=$rows2['COUNT(*)'];
 				$maxcat=$rows2['Category'];
-				//echo($rows2['COUNT(*)']);
-				//echo($rows2['Category']);
 				if($countcui==$countcat){
 					$result = $conn->query("SELECT * FROM recipes WHERE Category='$maxcat' and Cuisine='$maxcui'");
 					if ($result->num_rows > 0){
@@ -303,6 +354,14 @@ if(isset($_GET['login'])){
 					$result = $conn->query("SELECT * FROM recipes WHERE Category!='$maxcat' or Cuisine!='$maxcui'");
 					if ($result->num_rows > 0){
 						printrecipe($result);
+					}
+					echo("</table>");
+					$result = $conn->query("SELECT RID,RName,Imagename FROM recipes WHERE Category='$maxcat' and Cuisine='$maxcui' Order By Clickrate DESC");
+					if ($result->num_rows > 0){ 
+						printfullrecommendation($result);
+					}
+					else{
+						NoFavRec();
 					}
 				}
 				else if ($countcui>$countcat){
@@ -314,26 +373,42 @@ if(isset($_GET['login'])){
 					if ($result->num_rows > 0){
 						printrecipe($result);
 					}
+					echo("</table>");
+					$result = $conn->query("SELECT RID,RName,Imagename FROM recipes WHERE Cuisine='$maxcui' Order By Clickrate DESC");
+					if ($result->num_rows > 0){ 
+						printfullrecommendation($result);
+					}
+					else{
+						NoFavRec();
+					}
 				}
 				else if ($countcui<$countcat){
 					$result = $conn->query("SELECT * FROM recipes WHERE Category='$maxcat'");
 					if ($result->num_rows > 0){
 						printrecipe($result);
 					}
-					$result = $conn->query("SELECT * FROM recipes WHERE Category='$maxcat'");
+					$result = $conn->query("SELECT * FROM recipes WHERE Category!='$maxcat'");
 					if ($result->num_rows > 0){
 						printrecipe($result);
 					}
+					echo("</table>");
+					$result = $conn->query("SELECT RID,RName,Imagename FROM recipes WHERE Category='$maxcat' Order By Clickrate DESC");
+					if ($result->num_rows > 0){ 
+						printfullrecommendation($result);
+					}
+					else{
+						NoFavRec();
+					}
 				}
+				
 			}
 		}
 		else{
 			echo("fail");
 		}
-		echo("</table>");
 	}
 	}
-	else{
+	else{//if the favourite is null
 		
     if (isset($_POST['search'])) {
 		$target = $_POST['search'];
@@ -348,8 +423,12 @@ if(isset($_GET['login'])){
 			$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Cuisine != '$cuisine'");
 			if ($result->num_rows > 0){ 
 				printrecipe($result);
+				echo("</table>");
 			}
-			echo("</table>");	
+		}
+		$result = $conn->query("SELECT RID,RName,Imagename FROM recipes WHERE Cuisine = '$cuisine' Order By Clickrate DESC");
+		if ($result->num_rows > 0){ 
+			printfullrecommendation($result);
 		}
 	}
 	else {
@@ -366,17 +445,17 @@ if(isset($_GET['login'])){
 				printrecipe($result);
 				echo("</table>");
 			}
-			else{
-				echo("</table>");
-				
-			}
+		}
+		$result = $conn->query("SELECT RID,RName,Imagename FROM recipes WHERE Cuisine = '$cuisine' Order By Clickrate DESC");
+		if ($result->num_rows > 0){ 
+			printfullrecommendation($result);
 		}
 	}
 	}
 	}
 }
-else{
-    if (isset($_POST['search'])) {
+else{//if the visitor not yet login
+    if (isset($_POST['search'])) {//if visitor search anything
 		echo("<h2><center>Result</center></h2>");
 		printformat();
 		$target = $_POST['search'];
@@ -386,16 +465,22 @@ else{
 				$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Cuisine != '$cuisine'");
 				printrecipe($result);
 				echo("</table>");
+				
 		}
 		else{
 			$result = $conn->query("SELECT * FROM recipes WHERE RID IN(SELECT RID FROM recipes WHERE RName like '%$target%' or Introduction like '%$target%' or Category like '%$target%' or Cuisine like '%$target%') and Cuisine != '$cuisine'");
 			if ($result->num_rows > 0){ 
 				printrecipe($result);
+				echo("</table>");
 			}
-			echo("</table>");	
+				
+		}
+		$result = $conn->query("SELECT RID,RName,Imagename FROM recipes WHERE Cuisine = '$cuisine' Order By Clickrate DESC");
+		if ($result->num_rows > 0){ 
+			printfullrecommendation($result);
 		}
 	}
-	else {
+	else {//default page when not logged in
 		echo("<h2><center>Recipes</center></h2>");
 		printformat();
 		$result = $conn->query("SELECT * FROM recipes WHERE Cuisine = '$cuisine' ");
@@ -411,35 +496,12 @@ else{
 				printrecipe($result);
 				echo("</table>");
 			}
-			else{
-				echo("</table>");
-				
-			}
+		}
+		$result = $conn->query("SELECT RID,RName,Imagename FROM recipes WHERE Cuisine = '$cuisine' Order By Clickrate DESC");
+		if ($result->num_rows > 0){ 
+		printfullrecommendation($result);
 		}
 	}
-}
-$result = $conn->query("SELECT RID,Imagename FROM recipes WHERE Cuisine = '$cuisine' Order By Clickrate DESC");
-Function printrecommendation($result){
-	$stop=0;
-	while($rows = $result->fetch_assoc() and $stop!=4){
-	echo("<td>");
-$RID=$rows['RID'];
-$Image=$rows['Imagename'];
-echo("<form method='post' action='display.php'> ");
-echo("<input type='hidden' name='rid' value='$RID'>");
-echo("<input type='image' src='../../$Image'alt='Submit' width='200pt' height='200pt'>");
-echo("</form>");
-echo("</td>");
-$stop++;
-}
-}
-if ($result->num_rows > 0){ 
-echo("<h3><center>Recommendation</center></h3>");
-echo("<table border='0' width='60%' class='center'>");
-echo("<tr>");
-printrecommendation($result);
-echo("</tr>");
-echo("</table>");
 }
 ?>
 

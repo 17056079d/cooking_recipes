@@ -24,6 +24,30 @@ require 'db.php';
 </head>
 <body>
 <?php
+Function printfullrecommendation($result){
+	echo("<br><br><h3><center>Recommendation</center></h3>");
+	echo("<table border='0' width='80%' class='center'>");
+	echo("<tr>");
+	printrecommendation($result);
+	echo("</tr>");
+	echo("</table><br>");
+}
+Function printrecommendation($result){
+	$stop=0;
+	while($rows = $result->fetch_assoc() and $stop!=4){
+	echo("<td>");
+$RID=$rows['RID'];
+$Image=$rows['Imagename'];
+$RName=$rows['RName'];
+echo("<form method='post' action='display.php'> ");
+echo("<input type='hidden' name='rid' value='$RID'>");
+echo("<input type='image' src='../../$Image'alt='Submit' width='200pt' height='200pt'>");
+echo("</form>");
+echo($RName);
+echo("</td>");
+$stop++;
+}
+}
 if(isset($_COOKIE["userid"])&$_COOKIE["userid"]!="undefined"){
 	$Uid=$_COOKIE["userid"];
 	$URL="/Function/Search/search.php?login=true&uid=$Uid";
@@ -45,9 +69,11 @@ $ingredients = $conn->query("SELECT * from ingredients where RID = '$rid' ");
 $step = $conn->query("SELECT * FROM step where RID = '$rid' order by SID ASC");
 $re = $recipe->fetch_assoc();
 $Category=$re['Category'];
-$Cuisine=$re['Cuisine'];
-$new=$re['Clickrate']+1;
-$conn->query("update recipes SET Clickrate='$new' WHERE RID = '$rid'");
+$Cuisine=$re['Cuisine'];	
+if(isset($_POST['rid'])){
+	$new=$re['Clickrate']+1;
+	$conn->query("update recipes SET Clickrate='$new' WHERE RID = '$rid'");
+}
 
 ?>
 <div style="text-align: center;">
@@ -106,16 +132,9 @@ $conn->query("update recipes SET Clickrate='$new' WHERE RID = '$rid'");
 </tr>
 			</table>
 <?php
-			echo("<h3><center>Recommendation</center></h3>");
-echo("<table border='0' width='60%' class='center'>");
-echo("<tr>");
-$pass1=$conn->query("SELECT RID,Imagename FROM recipes WHERE Category='$Category' or Cuisine='$Cuisine'");
-if ($pass1->num_rows > 4){ 
-	$cui =$conn->query("SELECT COUNT(*),Cuisine FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=$uid GROUP BY Cuisine Order By COUNT(*) DESC");
-	$cat =$conn->query("SELECT COUNT(*),Category FROM favourite JOIN recipes ON favourite.RID=recipes.RID WHERE UID=$uid GROUP BY Category Order By COUNT(*) DESC");
-}
-echo("</tr>");
-echo("</table>");
+
+$result=$conn->query("SELECT RID,Imagename FROM recipes WHERE (Category='$Category' or Cuisine='$Cuisine') and RID!='$rid' Order By Clickrate DESC");
+printfullrecommendation($result);
 ?>
 
     </body>
