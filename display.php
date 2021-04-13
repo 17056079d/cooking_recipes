@@ -98,12 +98,25 @@ if(isset($_POST['rid'])){
 <table width="60%" class="center">
 			
     <tr>
-        <td width="30%" rowspan="3"><?php echo("<img src='../../".$re['Imagename']."'"."width='300pt' height='300pt'");?></td>
-            <td valign="top" style="text-align:left"> &nbsp;&nbsp;By <?php echo($re["Author"]); ?></td>
+        <td width="30%" rowspan="5"><?php echo("<img src='../../".$re['Imagename']."'"."width='300pt' height='300pt'");?></td>
+            <td valign="top" style="text-align:left"> &nbsp;&nbsp;Author:&nbsp;&nbsp;<a href="list.php?Author=<?=$re["Author"]?>"><?php ECHO($re["Author"]);?></a></td>
             
         </td>
 </tr>
-<tr><td>
+<tr>
+	<td style="text-align:left">
+	&nbsp;&nbsp;Cuisine:&nbsp;&nbsp;<a href="list.php?Cuisine=<?=$Cuisine?>"><?php ECHO($Cuisine);?></a>
+</td>
+</tr>
+<tr>
+	<td style="text-align:left">
+	&nbsp;&nbsp;Category:&nbsp;&nbsp;<a href="list.php?Category=<?=$Category?>"><?php ECHO($Category);?></a>
+	
+				
+</td>
+</tr>
+<tr>
+	<td>
 <?php echo("<form method='post' action='addfavourite.php?id=$rid&display=true'>")?>
 					<input type="hidden" name="rid" value="<?= $rid ?>"></input>
 					<h5><button>Favourite</button></h5>
@@ -115,7 +128,7 @@ if(isset($_POST['rid'])){
     <?php echo("<ul>");
 	while($in = $ingredients->fetch_assoc()){
 				
-                echo("<li>".$in['InName'].' '.$in['Amount']."</li>");
+                echo("<li>".$in['InName'].' '.$in['Amount']."</li><br>");
 				
 				} echo("</ul>");
                 ?>
@@ -125,7 +138,7 @@ if(isset($_POST['rid'])){
     <?php echo("<ol>");
 	while($st = $step->fetch_assoc()){
 				
-                echo("<li>".$st['Method']."</li>");
+                echo("<li>".$st['Method']."</li><br>");
 				
 				} echo("</ol>");
                 ?>
@@ -133,7 +146,7 @@ if(isset($_POST['rid'])){
 			</table>
 <?php
 
-$result=$conn->query("SELECT RID,Imagename FROM recipes WHERE (Category='$Category' or Cuisine='$Cuisine') and RID!='$rid' Order By Clickrate DESC");
+$result=$conn->query("SELECT RID,RName,Imagename FROM recipes WHERE (Category='$Category' or Cuisine='$Cuisine') and RID!='$rid' Order By Clickrate DESC");
 printfullrecommendation($result);
 ?>
 
